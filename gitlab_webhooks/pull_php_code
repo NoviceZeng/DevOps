@@ -1,0 +1,17 @@
+#coding:utf-8
+from wsgiref.simple_server import make_server
+import subprocess,os,sys
+def RunServer(environ, start_response):
+    start_response('200 OK', [('Content-Type', 'text/html')])
+    os.chdir("/root/auto_git_pull/live_php_admin/");
+    git_pull = subprocess.Popen('git pull origin uat', shell=True, stdout=subprocess.PIPE)
+    copy_code  = subprocess.Popen('cp -ruf /root/auto_git_pull/live_php_admin/* /data/work/live_php/', shell=True, stdout=subprocess.PIPE)
+    return '<h1>pull live_php_admin code now......</h1>'
+    for line in iter(git_pull.stdout.readline, ''):
+        sys.stdout.write(line)
+        f.write(line)
+
+if __name__ == '__main__':
+    httpd = make_server('0.0.0.0', 9999, RunServer)
+    print ("Serving HTTP on port 9999...")
+    httpd.serve_forever()
