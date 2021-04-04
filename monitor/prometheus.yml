@@ -24,13 +24,13 @@ scrape_configs:
     static_configs:
     - targets: ['localhost:9090']
 
-  - job_name: 'hk-pub-nginx-61'
+  - job_name: 'cn-pub-nginx-61'
     static_configs:
     - targets: ['172.31.24.61:9100']
       labels:
         ip: '172.31.24.61'
 
-  - job_name: 'hk-pub-redis-236'
+  - job_name: 'cn-pub-redis-236'
     static_configs:
     - targets: ['172.31.27.236:9100']
       labels:
