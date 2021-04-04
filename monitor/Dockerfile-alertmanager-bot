@@ -1,0 +1,10 @@
+docker run  -d \
+	-e 'ALERTMANAGER_URL=http://172.31.23.2:9093' \
+	-e 'BOLT_PATH=/data/bot.db' \
+    -p 8080:8080 \
+	-e 'STORE=bolt' \
+	-e 'TELEGRAM_ADMIN=111111111' \
+	-e 'TELEGRAM_TOKEN=1171888888:AAHJl9N_m07_isiXQrLiNV9E0aaaaaaGSY' \
+	-v '/data/bot_alert:/data' \
+	--name alertmanager-bot \
+	metalmatze/alertmanager-bot:0.4.3

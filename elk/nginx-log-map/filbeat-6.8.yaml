@@ -1,0 +1,79 @@
+filebeat.inputs:
+# uat-live
+- type: log
+  enabled: true
+  paths:
+    - /opt/nginx/logs/m_access.log
+  fields:
+    program: live
+    log_topic: nginx-access
+    subdomain: m
+
+- type: log
+  enabled: true
+  paths:
+    - /opt/nginx/logs/m.*error.log
+  fields:
+    program: live
+    log_topic: nginx-error
+    subdomain: m
+
+- type: log
+  enabled: true
+  paths:
+    - /opt/nginx/logs/admin_access.log
+  fields:
+    program: live
+    log_topic: nginx-access
+    subdomain: admin
+
+- type: log
+  enabled: true
+  paths:
+    - /opt/nginx/logs/admin.*error.log
+  fields:
+    program: live
+    log_topic: nginx-error
+    subdomain: admin
+
+- type: log
+  enabled: true
+  paths:
+    - /opt/nginx/logs/user.*access.log
+  fields:
+    program: live
+    log_topic: nginx-access
+    subdomain: user
+
+- type: log
+  enabled: true
+  paths:
+    - /opt/nginx/logs/user.*error.log
+  fields:
+    program: live
+    log_topic: nginx-error
+    subdomain: user
+
+filebeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+  reload.enabled: false
+
+setup.template.settings:
+  index.number_of_shards: 3
+
+queue:
+  mem:
+    events: 3072
+
+output.kafka:
+  hosts: ["172.31.0.23:9092","172.31.0.24:9092","172.31.0.25:9092"]
+  topic: '%{[fields][log_topic]}'
+  partition.round_robin:
+    reachable_only: true
+  worker: 2
+
+processors:
+- drop_fields:
+    fields: ["beat", "input", "log", "offset", "prospector"]
+
+logging.level: error
