@@ -1,4 +1,4 @@
-                                                                # prometheus安装、tg报警及相关注意事项
+ # prometheus安装、tg报警及相关注意事项
 
 ## 1. 注意事项
 1. prometheus、alertmanager默认使用utc时区，比cst慢了8小时，docker运行时使用 *-v /etc/localtime:/etc/localtime* 或者 _ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime_ 
