@@ -47,6 +47,6 @@ docker run -d \
         metalmatze/alertmanager-bot:0.4.3
 ```
 ## 6. node_exporter安装
-1. 官方(GitHub)[https://github.com/prometheus/node_exporter/releases/tag/v1.1.2] 下载对应版本；
+1. 官方[GitHub](https://github.com/prometheus/node_exporter/releases/tag/v1.1.2) 下载对应版本；
 2. 解压并命名到/opt/node_exporter中；
 3. 运行命令 _nohup ./node_exporter  >> /data/logs/monitor/node_exporter.log 2>&1 &_
