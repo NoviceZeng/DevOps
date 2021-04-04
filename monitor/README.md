@@ -7,12 +7,12 @@
 3. aws node节点不放行9100端口，Prometheus会一直不报警，因为prom拉取报metrics *http://172.31.27.236:9100/metrics*  时没有给任何超时响应，只是卡在那离，不返回结果，所以不报警。
    其中，prometheus.yml的 *scrape_timeout* 超时时间设置没有起到作用
 
-## 1.2 tg bot创建
+## 1.2 tg bot创建相关
 1. 请参考(官方文档)[https://core.telegram.org/bots] 中第三步通过BotFather创建bot并获取token，通过向 *@userinfobot* 发送任何消息获取chat id;
 2. **如果tg接收不到报警，一定要想到是否在对应群组里面运行/start，开始报警**，如下图所示
-   ![image](https://user-images.githubusercontent.com/33800153/113503622-a5c02280-9565-11eb-8c92-b8ab2e124225.png)
+   ![image](https://user-images.githubusercontent.com/33800153/113503653-dc963880-9565-11eb-8fa8-356be3f95ace.png)
 
-## 1.2 Prometheus安装
+## 1.3 Prometheus安装
 ```
 docker run -d -p 9090:9090 \
 -v /data/prometheus/:/prometheus/ \
@@ -22,7 +22,7 @@ pro/prometheus
 ```
 配置文件见prometheus.yml、first_rules.yml
 
-## 1.3 Alertmanager安装
+## 1.4 Alertmanager安装
 ```
 docker run -d \
   -p 9093:9093 \
@@ -33,7 +33,7 @@ docker run -d \
  ```
  配置文件见alertmanager.yml
  
- ## 1.4 alertmanager-bot报警安装
+ ## 1.5 alertmanager-bot报警安装
  ```
  docker run  -d \
         -e 'ALERTMANAGER_URL=http://172.31.23.2:9093' \
@@ -46,3 +46,7 @@ docker run -d \
         --name alertmanager-bot \
         metalmatze/alertmanager-bot:0.4.3
 ```
+## 1.6 node_exporter安装
+1. 官方(GitHub)[https://github.com/prometheus/node_exporter/releases/tag/v1.1.2)下载对应版本；
+2. 解压并命名到/opt/node_exporter中；
+3. 运行命令 _nohup ./node_exporter  >> /data/logs/monitor/node_exporter.log 2>&1 &_
