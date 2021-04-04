@@ -1,4 +1,4 @@
- # prometheus安装、tg报警及相关注意事项
+ # prometheus之telegram报警设置、安装及相关注意事项
 
 ## 1. 注意事项
 1. prometheus、alertmanager默认使用utc时区，比cst慢了8小时，docker运行时使用 *-v /etc/localtime:/etc/localtime* 或者 _ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime_ 
@@ -13,6 +13,7 @@
    ![image](https://user-images.githubusercontent.com/33800153/113503653-dc963880-9565-11eb-8fa8-356be3f95ace.png)
 
 ## 3. Prometheus安装
+默认使用最新版本，如果需要安装执行版本，肯根据dockerhub中的版本号，手动添加版本号
 ```
 docker run -d -p 9090:9090 \
 -v /data/prometheus/:/prometheus/ \
@@ -34,11 +35,12 @@ docker run -d \
  配置文件见alertmanager.yml
  
  ## 5. alertmanager-bot报警安装
+ 报警触发器采用[metalmatze/alertmanager-bot](https://github.com/metalmatze/alertmanager-bot)，docker安装如下：
  ```
  docker run  -d \
         -e 'ALERTMANAGER_URL=http://172.31.23.2:9093' \
         -e 'BOLT_PATH=/data/bot.db' \
-    -p 8080:8080 \
+        -p 8080:8080 \
         -e 'STORE=bolt' \
         -e 'TELEGRAM_ADMIN=111111111' \
         -e 'TELEGRAM_TOKEN=1171888888:AAHJl9N_m07_isiXQrLiNV9E0aaaaaaGSY' \
