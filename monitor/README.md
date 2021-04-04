@@ -1,7 +1,7 @@
 # 1. prometheus安装、tg报警及相关注意事项
 
 ## 1.1 注意事项
-1. prometheus、alertmanager默认使用utc时区，比cst慢了8小时，docker运行时使用*-v /etc/localtime:/etc/localtime* 或者ln *ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime* 
+1. prometheus、alertmanager默认使用utc时区，比cst慢了8小时，docker运行时使用 *-v /etc/localtime:/etc/localtime* 或者 *ln -s /usr/share/zoneinfo/Asia/Shanghai /etc/localtime* 
    的方式只能改变容器的时间，prom和alertmanager web界面中显示的时间是代码中定义的，只有修改代码中对应的时区才能修改报警时web界面显示的时间
 2. 服务器系统的时区不一致可能导致alertmanager接收不到报警；另外docker镜像中全部统一默认UTC时区，不影响报警，tg显示的时区时间独立于容器中的时区时间；
 3. aws node节点不放行9100端口，Prometheus会一直不报警，因为
