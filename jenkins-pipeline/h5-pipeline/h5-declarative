@@ -1,0 +1,59 @@
+pipeline {
+	agent any 
+	parameters {
+		choice choices: ['uat', 'release'], description: '请选择分支，发布到对应的环境！', name: 'Branch'
+	}
+	
+	environment {
+		git_auth = '3f269719-e6a8-46e5-a4bc-bef85a26a00d'
+		git_address = 'https://gitlab.abc.com/123/h5_h5.git'
+	}	
+	
+	stages {
+		//第一步
+		stage('代码拉取') { 
+			steps {
+				checkout([$class: 'GitSCM', branches: [[name: '${Branch}']], userRemoteConfigs: [[credentialsId: "${git_auth}", url: "${git_address}"]]]) 
+			}
+		}
+		
+		// 第二步
+		stage('编译'){
+			steps {
+				sh 'npm run build'
+			}
+		}	
+		
+		// 第三步
+		stage('部署代码至UAT'){
+			when {
+				environment name: 'Branch', value: 'uat'
+			}
+			steps {
+				echo '正在发布到UAT环境中......'
+				sh 'scp -rp /data/jenkins/workspace/ur-live-h5/dist 172.31.12.127:/data/work/live_h5/'
+			}
+		}	
+
+		// 第三步
+		stage('部署代码至Release'){
+			when {
+				environment name: 'Branch', value: 'release'
+			}
+			steps {
+				echo '正在发布到release环境中......'
+				sh 'scp -rp /data/jenkins/workspace/ur-live-h5/dist 172.31.12.127:/data/work/live_h5/'
+			}
+		}
+		
+		// 第四步
+		stage('发送telegram通知') {
+			steps {
+				//使用 withCredentials加密telegram的token以及chat_id
+				withCredentials([string(credentialsId: '6b7f2000-ac4c-4423-9283-18d449e56b79', variable: 'Chat_ID'), string(credentialsId: 'aedd248d-13aa-4047-8e3d-1cb2e3e05833', variable: 'Tele_Token')]) {
+					sh 'curl -s -X POST https://api.telegram.org/bot$Tele_Token/sendMessage -d chat_id=$Chat_ID -d text="uat_live_H5发布成功, 请测试!"'
+				}
+			}
+		}		
+	}	
+}

@@ -1,0 +1,50 @@
+pipeline {
+	agent any 
+	parameters {
+		choice choices: ['uat', 'release'], description: '请选择分支，发布到对应的环境！', name: 'Branch'
+	}
+	
+	environment {
+		git_auth = '3f269719-e6a8-46e5-a4bc-bef85a26a00d'
+		git_address = 'https://gitlab.abc.com/123/php_admin.git'
+	}	
+	
+	stages {
+		// 第一步
+		stage('拉取代码') { 
+			steps {
+				checkout([$class: 'GitSCM', branches: [[name: '${Branch}']], userRemoteConfigs: [[credentialsId: "${git_auth}", url: "${git_address}"]]]) 
+			}
+		}
+		
+		// 第二步部署代码至UAT并重启php-fpm
+		stage('部署代码到UAT'){
+			when {
+				environment name: 'Branch', value: 'uat'
+			}
+			steps {
+				echo '正在发布到UAT环境中......'
+				sh 'scp -rp /data/jenkins/workspace/PHP-admin/* 172.31.12.135:/data/work/uat_php_admin' 
+				sh 'sshpass ssh root@172.31.12.135 "systemctl reload php-fpm"'
+			} 
+		}
+		
+		// 第二步部署代码至Release并重启php-fpm
+		stage('部署代码到Release'){
+			when {
+				environment name: 'Branch', value: 'release'
+				 }
+			steps {
+				echo '正在发布到T8 release环境中......'
+				sh 'scp -rp /data/jenkins/workspace/PHP-admin/* 172.31.0.176:/data/work/rel_php_admin/'
+				sh 'sshpass ssh root@172.31.0.176 "systemctl reload php-fpm"'
+			} 
+		}
+		// 第三步
+		stage('发送telegram通知') {
+			steps {
+				telegramSend(message: '发布项目:${PROJECT_NAME}---发布环境: ${Branch}---发布状态:${BUILD_STATUS}',chatId:-444900000)
+			}
+		}
+	}						
+}
