@@ -5,7 +5,7 @@
 > * pull_multi_repo：批量更新多个本地git仓库
 
 
-# 1. h5-pipeline
+# h5-pipeline
 ## pipeline脚本的注意事项
 > * 声明式脚本中通过script使用groovy语法，需要调用定义的环境变量，需要加env，例如本文中，if (env.Branch == 'uat')，测试在scrip中，不能通过echo打印定义的环境变量
 > * scp拷贝front目录下的所有文件到远程主机的work目录下： scp -rp /front/* 1.1.1.1:/data/work/；拷贝front文件，则scp -rp /front 1.1.1.1:/data/work/
