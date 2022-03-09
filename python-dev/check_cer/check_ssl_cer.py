@@ -39,11 +39,11 @@ def check_ssl(domain):
 
 # 发送邮件
 def send_mail(**expire_list):
-    user = 'thomson@e-veb.com'
+    user = 'thomson@abc.com'
     password = '123456789012'
     # gmail
     host = 'smtp.gmail.com'
-    to =['server@e-veb.com','thomson@e-veb.com','zero@e-veb.com','axel@e-veb.com','bob@e-veb.com','alexander@e-veb.com','hamilton@e-veb.com']
+    to =['server@abc.com','thomson@abc.com','zero@abc.com','axel@abc.com','bob@abc.com','alexander@abc.com','hamilton@abc.com']
     subject = 'ssl证书过期预警'
     d = ''
     d += '''\
