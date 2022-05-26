@@ -1,24 +1,21 @@
-import subprocess,os,sys,threading
+#!/usr/bin/python3
+import os
+import sys
+from subprocess import Popen, PIPE, STDOUT, call
+from wsgiref.simple_server import make_server
 
-class MyThread(threading.Thread):
-    def __init__(self, sync_path):
-        super(MyThread, self).__init__()
-        self.sync_path = sync_path
+def application(enviro, start_response):
+    start_response('200 OK', [('content-type', 'text/html')])
+    os.chdir('/opt/nginx-whitelist')
+    #call('git reset --hard origin/main', shell=True)
+    #call('git pull origin main', shell=True)
+    with open('/opt/git_pull/logs/git_pull.log', 'a+') as f:
+        Popen('git reset --hard origin/main', shell=True, stdout=PIPE)
+        git_stdout = Popen('git pull origin main', shell=True, stdout=PIPE)
+        for line in iter(git_stdout.stdout.readline, ''):
+            f.write(line.decode('utf-8'))
+    return ['<h3>Hey I`m hook! Who are you?</h3>'.encode('utf-8')]
 
-    def run(self):
-        os.chdir(self.sync_path)
-        with open('/root/pic_sync/log/git_pull.log', 'a+') as f:
-            #git_pull = subprocess.Popen('git reset --hard origin/master', shell=True, stdout=subprocess.PIPE)
-            git_pull = subprocess.Popen('git pull origin master', shell=True, stdout=subprocess.PIPE)
-            for line in iter(git_pull.stdout.readline, ''):
-                sys.stdout.write(line)
-                f.write(line)
-
-def exec_pull():
-    root_dir = '/imgserver/'
-    for site_name in os.listdir(root_dir):
-        sync_path = root_dir + site_name + '/upload'
-        MyThread(sync_path).start()
-
-if __name__ == "__main__":
-    exec_pull()
+httpd = make_server('', 8000, application)
+print("Serving HTTP on port 8000...")
+httpd.serve_forever()
